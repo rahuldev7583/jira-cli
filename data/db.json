@@ -1,0 +1,23 @@
+{
+  "last_item_id": 1,
+  "epics": {
+    "1": {
+      "name": "Epic - Project 1",
+      "description": "epic description",
+      "status": "InProgress",
+      "stories": [2, 3]
+    }
+  },
+  "stories": {
+    "2": {
+      "name": "Story - Project 1 Solution",
+      "description": "full implement for Project 1",
+      "status": "Closed"
+    },
+    "3": {
+      "name": "Story - Project 1 README",
+      "description": "create README file for Project 1",
+      "status": "InProgress"
+    }
+  }
+}
