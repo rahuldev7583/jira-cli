@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::error;
 use std::collections::HashMap;
 
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub enum Status {
     Open,
     InProgress,
@@ -10,7 +10,7 @@ pub enum Status {
     Closed,
 }
 
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct Epic {
     pub name: String,
     pub description: String,
@@ -19,7 +19,7 @@ pub struct Epic {
 }
 
 impl Epic {
-    fn new(name: String, description: String) -> Epic {
+    pub fn new(name: String, description: String) -> Epic {
         let epic = Epic {
             name,
             description,
@@ -30,7 +30,7 @@ impl Epic {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct Story {
     pub name: String,
     pub description: String,
@@ -38,7 +38,7 @@ pub struct Story {
 }
 
 impl Story {
-    fn new(name: String, description: String) -> Story {
+    pub fn new(name: String, description: String) -> Story {
         let story = Story {
             name,
             description,
@@ -48,7 +48,7 @@ impl Story {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct DBState {
     pub last_item_id: u32,
     pub epics: HashMap<u32, Epic>,
