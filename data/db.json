@@ -1,23 +1,14 @@
 {
-  "last_item_id": 1,
+  "last_item_id": 3,
   "epics": {
-    "1": {
-      "name": "Epic - Project 1",
-      "description": "epic description",
-      "status": "InProgress",
-      "stories": [2, 3]
-    }
+    "1": { "name": "hi", "description": "hello", "status": "InProgress", "stories": [3] }
   },
   "stories": {
-    "2": {
-      "name": "Story - Project 1 Solution",
-      "description": "full implement for Project 1",
-      "status": "Closed"
-    },
     "3": {
-      "name": "Story - Project 1 README",
-      "description": "create README file for Project 1",
+      "name": "Rust backend",
+      "description": "matching engine rewrite",
       "status": "InProgress"
     }
   }
 }
+
