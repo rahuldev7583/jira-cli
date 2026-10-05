@@ -5,7 +5,7 @@ pub fn get_user_input() -> String {
 
     io::stdin().read_line(&mut buffer);
 
-    println!("buffer: {}", buffer);
+    // println!("buffer: {}", buffer);
 
     buffer
 }

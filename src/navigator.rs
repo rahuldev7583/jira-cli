@@ -121,8 +121,6 @@ impl Navigator {
         Ok(())
     }
 
-    
-
     fn get_page_count(&self) -> usize {
         self.pages.len()
     }

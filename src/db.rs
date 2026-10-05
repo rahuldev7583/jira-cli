@@ -16,56 +16,60 @@ pub trait Database {
 }
 
 pub struct JiraDatabase {
-    database: Box<dyn Database>,
+    pub database: Box<dyn Database>,
 }
 
 impl JiraDatabase {
-    fn new(file_path: String) -> Result<DBState, Error> {
-        println!("file_path:{}", file_path);
-        let mut file = File::open(file_path)?;
-        let data = DBState {
-            last_item_id: 0,
-            epics: HashMap::new(),
-            stories: HashMap::new(),
-        };
+    pub fn new(file_path: String) -> Self {
+        // println!("file_path:{}", file_path);
+        // let mut file = File::open(file_path)?;
+        // let data = DBState {
+        //     last_item_id: 0,
+        //     epics: HashMap::new(),
+        //     stories: HashMap::new(),
+        // };
+        //
+        // let data_json = serde_json::to_string(&data)?;
+        //
+        // file.write_all(&data_json.as_bytes());
+        //
+        // Ok(data)
 
-        let data_json = serde_json::to_string(&data)?;
-
-        file.write_all(&data_json.as_bytes());
-
-        Ok(data)
+        Self {
+            database: Box::new(JSONFileDatabase { file_path }),
+        }
     }
-    fn read_db(&self) -> Result<DBState, Error> {
-        println!("hi");
+    pub fn read_db(&self) -> Result<DBState, Error> {
+        //  println!("hi");
 
         let result = self.database.read_db()?;
 
         Ok(result)
     }
 
-    fn create_epic(&self, epic: Epic) -> Result<u32, Error> {
-        println!("create epic called");
+    pub fn create_epic(&self, epic: Epic) -> Result<u32, Error> {
+        //  println!("create epic called");
         let mut exiting_file = self.database.read_db().expect("error");
 
         let last_item = exiting_file.last_item_id;
-        println!("last_item: {}", last_item);
+        //  println!("last_item: {}", last_item);
         let new_item = last_item + 1;
 
         exiting_file.last_item_id = new_item;
         exiting_file.epics.insert(new_item, epic);
 
-        println!("exiting_file: {:?}", exiting_file);
+        //   println!("exiting_file: {:?}", exiting_file);
 
         self.database.write_db(&exiting_file);
 
         Ok(new_item)
     }
-    fn create_story(&self, story: Story, epic_id: u32) -> Result<u32> {
-        println!("create epic called");
+    pub fn create_story(&self, story: Story, epic_id: u32) -> Result<u32> {
+        //   println!("create story called");
         let mut exiting_file = self.database.read_db()?;
 
         let last_item = exiting_file.last_item_id;
-        println!("last_item: {}", last_item);
+        // println!("last_item: {}", last_item);
         let new_item = last_item + 1;
 
         exiting_file.last_item_id = new_item;
@@ -74,28 +78,28 @@ impl JiraDatabase {
 
         let mut epic = find_epic.ok_or(anyhow::Error::msg("epic not found"))?;
 
-        println!("epic: {:?}", epic);
+        //  println!("epic: {:?}", epic);
 
         epic.stories.push(new_item);
-        println!("exiting_file: {:?}", exiting_file);
+        // println!("exiting_file: {:?}", exiting_file);
 
         exiting_file.stories.insert(new_item, story);
-        println!("exiting_file: {:?}", exiting_file);
+        // println!("exiting_file: {:?}", exiting_file);
 
         self.database.write_db(&exiting_file);
 
         Ok(new_item)
     }
-    fn delete_epic(&self, epic_id: u32) -> Result<()> {
-        println!("delete epic called");
+    pub fn delete_epic(&self, epic_id: u32) -> Result<()> {
+        //  println!("delete epic called");
         let mut exiting_file = self.database.read_db().expect("error");
 
-        println!("exiting_file: {:?}", exiting_file);
+        //  println!("exiting_file: {:?}", exiting_file);
         let find_epic = exiting_file.epics.get_mut(&epic_id);
 
         let mut epic = find_epic.ok_or(anyhow::Error::msg("epic not found"))?;
 
-        println!("epic: {:?}", epic);
+        //  println!("epic: {:?}", epic);
 
         let epic_stories = &epic.stories;
 
@@ -108,21 +112,21 @@ impl JiraDatabase {
         }
 
         exiting_file.epics.remove(&epic_id);
-        println!("exiting_file: {:?}", exiting_file);
+        //  println!("exiting_file: {:?}", exiting_file);
         self.database.write_db(&exiting_file);
 
         Ok(())
     }
-    fn delete_story(&self, epic_id: u32, story_id: u32) -> Result<(), Error> {
-        println!("delete story called");
+    pub fn delete_story(&self, epic_id: u32, story_id: u32) -> Result<(), Error> {
+        // println!("delete story called");
         let mut exiting_file = self.database.read_db().expect("error");
 
-        println!("exiting_file: {:?}", exiting_file);
+        //  println!("exiting_file: {:?}", exiting_file);
         let find_epic = exiting_file.epics.get_mut(&epic_id);
 
         let mut epic = find_epic.ok_or(anyhow::Error::msg("epic not found"))?;
 
-        println!("epic: {:?}", epic);
+        // println!("epic: {:?}", epic);
 
         let epic_stories = &epic.stories;
 
@@ -131,9 +135,9 @@ impl JiraDatabase {
             .find(|&e| e == &story_id)
             .ok_or(anyhow::Error::msg("story  not found"))?;
 
-        println!("find story: {:?}", find_story);
+        //   println!("find story: {:?}", find_story);
 
-        println!("story index: {}", 1);
+        //  println!("story index: {}", 1);
 
         let arr = vec![4, 2, 3, 6, 8, 1];
 
@@ -151,35 +155,35 @@ impl JiraDatabase {
         Ok(())
     }
 
-    fn update_epic_status(&self, epic_id: u32, status: Status) -> Result<u32> {
-        println!("update epic called");
+    pub fn update_epic_status(&self, epic_id: u32, status: Status) -> Result<u32> {
+        //    println!("update epic called");
         let mut exiting_file = self.database.read_db().expect("error");
 
-        println!("exiting_file: {:?}", exiting_file);
+        //   println!("exiting_file: {:?}", exiting_file);
         let find_epic = exiting_file.epics.get_mut(&epic_id);
 
         let mut epic = find_epic.ok_or(anyhow::Error::msg("epic not found"))?;
 
-        println!("epic: {:?}", epic);
+        //    println!("epic: {:?}", epic);
 
         epic.status = status;
-        println!("exiting_file: {:?}", exiting_file);
+        //  println!("exiting_file: {:?}", exiting_file);
         self.database.write_db(&exiting_file);
         Ok(epic_id)
     }
-    fn update_story_status(&self, story_id: u32, status: Status) -> Result<u32> {
-        println!("update story called");
+    pub fn update_story_status(&self, story_id: u32, status: Status) -> Result<u32> {
+        // println!("update story called");
         let mut exiting_file = self.database.read_db().expect("error");
 
-        println!("exiting_file: {:?}", exiting_file);
+        //  println!("exiting_file: {:?}", exiting_file);
         let find_story = exiting_file.stories.get_mut(&story_id);
 
         let mut story = find_story.ok_or(anyhow::Error::msg("story not found"))?;
 
-        println!("story: {:?}", story);
+        // println!("story: {:?}", story);
 
         story.status = status;
-        println!("exiting_file: {:?}", exiting_file);
+        // println!("exiting_file: {:?}", exiting_file);
         self.database.write_db(&exiting_file);
         Ok(story_id)
     }
@@ -196,19 +200,19 @@ impl Database for JSONFileDatabase {
 
         let mut file = File::open(&self.file_path)?;
 
-        println!("file: {:?}", file);
+        //  println!("file: {:?}", file);
         let mut buffer = String::new();
 
-        println!("buffer: {}", buffer);
+        //   println!("buffer: {}", buffer);
         file.read_to_string(&mut buffer)?;
 
-        println!("got read");
+        //  println!("got read");
 
-        println!("content: {}", buffer);
+        //    println!("content: {}", buffer);
 
         let json_file: DBState = serde_json::from_str(&buffer)?;
 
-        println!("json_file, {:?}", json_file);
+        //  println!("json_file, {:?}", json_file);
         Ok(json_file)
     }
 
